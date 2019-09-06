@@ -1,0 +1,102 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.6.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
+}
+
+group 'com.netty'
+version '1.0.0'
+
+apply plugin: 'java-library'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+def env = project.hasProperty('env') ? project.property('env') : "dev"
+def jarVersionSuffix = env == "pro" ? "-RELEASE" : "-SNAPSHOT"
+
+ext {
+    mapperVersion = '2.1.5'
+    mybatisSpringbootStarterVersion = '2.1.0'
+    pagehelperVersion = '1.2.12'
+    jedisVersion = '2.10.0'
+    swaggerVersion = '2.9.2'
+    alipayVersion = '3.3.4.ALL'
+    mysqlVersion = '8.0.11'
+    nettyVersion = '4.1.39.Final'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url 'http://nexus.qubaotang.cn/repository/maven-public/'
+    }
+    maven {
+        url 'http://maven.aliyun.com/nexus/content/groups/public/'
+    }
+}
+
+dependencies {
+    annotationProcessor "org.projectlombok:lombok"
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    testAnnotationProcessor "org.projectlombok:lombok"
+    testAnnotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    testCompileOnly("org.projectlombok:lombok")
+    compileOnly("org.projectlombok:lombok")
+    api("com.fanglin:tk-mapper-generator:1.0.0")
+
+    implementation("io.springfox:springfox-swagger2:${swaggerVersion}")
+    implementation("io.springfox:springfox-swagger-ui:${swaggerVersion}")
+
+    implementation("com.fanglin.common:common:1.0.0${jarVersionSuffix}")
+    implementation("org.springframework.boot:spring-boot-configuration-processor")
+    implementation("redis.clients:jedis:${jedisVersion}")
+    implementation("org.springframework.boot:spring-boot-starter-undertow") {
+        exclude module: 'undertow-websockets-jsr'
+    }
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+        exclude module: 'spring-boot-starter-tomcat'
+    }
+    implementation("io.netty:netty-all:${nettyVersion}")
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = 'local'
+            version += jarVersionSuffix
+        }
+    }
+    repositories {
+        maven {
+            name = 'nexus'
+            def releasesRepoUrl = "http://nexus.qubaotang.cn/repository/maven-releases/"
+            def snapshotsRepoUrl = "http://nexus.qubaotang.cn/repository/maven-snapshots/"
+            url = env == 'pro' ? releasesRepoUrl : snapshotsRepoUrl
+            credentials {
+                username = 'admin'
+                password = "123456"
+            }
+        }
+    }
+}
+
+tasks {
+    processResources {
+        from("src/main/resources")
+        into("$buildDir/resources/main")
+        include("application-" + env + ".yml", "**/*.xml", "*.p12")
+        rename("application-" + env + ".yml", "application.yml")
+    }
+}
