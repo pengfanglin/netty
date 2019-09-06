@@ -6,4 +6,11 @@ package com.netty.service;
  * @date 2019/9/6 18:22
  **/
 public interface SocketService {
+    /**
+     * 数据刷新
+     *
+     * @param id
+     * @param content
+     */
+    void sendMessage(Integer userId, String message);
 }

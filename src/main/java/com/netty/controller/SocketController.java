@@ -23,22 +23,22 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2019/4/3 16:36
  **/
 @RestController
-@RequestMapping("/ws/common/")
-@Api(value = "/ws/common/", tags = {"APP-其他"})
+@RequestMapping("/socket/common/")
+@Api(value = "/socket/common/", tags = {"APP-其他"})
 public class SocketController {
 
     @Autowired
     SocketService socketService;
 
-    @ApiOperation("上传多个文件")
+    @ApiOperation("发送消息")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "files", value = "图片文件", required = true),
-        @ApiImplicitParam(name = "path", value = "保存路径", defaultValue = "/files/others")
+        @ApiImplicitParam(name = "userId", value = "用户id", required = true)
     })
     @Token
-    @PostMapping("uploadFiles")
-    public Ajax uploadFiles(@RequestParam("files") MultipartFile[] files, String path) {
-        return UploadUtils.uploadFiles(files, false, path);
+    @PostMapping("sendMessage")
+    public Ajax refresh(@RequestParam Integer userId, @RequestParam String message) {
+        socketService.sendMessage(userId, message);
+        return Ajax.ok();
     }
 
 }
