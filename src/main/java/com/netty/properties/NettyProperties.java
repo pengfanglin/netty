@@ -1,5 +1,6 @@
 package com.netty.properties;
 
+import io.netty.handler.logging.LogLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,5 +25,13 @@ public class NettyProperties {
     /**
      * 端口号
      */
-   private Integer port=9090;
+    private Integer port = 9090;
+    /**
+     * 等待连接队列大小
+     */
+    private Integer backlog = 1024;
+    /**
+     * 日志级别
+     */
+    private LogLevel logLevel = null;
 }

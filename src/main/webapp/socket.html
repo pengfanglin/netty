@@ -6,21 +6,21 @@
 </head>
 <body>
 <script type="text/javascript" src="./socket.js"></script>
-<!--  let socket;-->
+<!--  let response;-->
 <!--  if (window.WebSocket) {-->
-<!--    socket = new WebSocket("ws://localhost:9090/ws");-->
+<!--    response = new WebSocket("ws://localhost:9090/ws");-->
 <!--    //收到消息-->
-<!--    socket.onmessage = function (event) {-->
+<!--    response.onmessage = function (event) {-->
 <!--      let ta = document.getElementById("responseText");-->
 <!--      ta.value = ta.value + "\n" + event.data;-->
 <!--    };-->
 <!--    //连接打开-->
-<!--    socket.onopen = function (event) {-->
+<!--    response.onopen = function (event) {-->
 <!--      let ta = document.getElementById("responseText");-->
 <!--      ta.value = "连接开启";-->
 <!--    };-->
 <!--    //连接断开-->
-<!--    socket.onclose = function (event) {-->
+<!--    response.onclose = function (event) {-->
 <!--      let ta = document.getElementById("responseText");-->
 <!--      ta.value = ta.value + "\n" + "连接关闭";-->
 <!--    }-->
@@ -32,11 +32,11 @@
 <!--    if (!window.WebSocket) {-->
 <!--      return;-->
 <!--    }-->
-<!--    if (socket.readyState === WebSocket.OPEN) {-->
-<!--      socket.send(message);-->
+<!--    if (response.readyState === WebSocket.OPEN) {-->
+<!--      response.send(message);-->
 <!--    } else {-->
 <!--      alert("连接尚未开启");-->
-<!--      socket.-->
+<!--      response.-->
 <!--    }-->
 <!--  }-->
 <!--</script>-->

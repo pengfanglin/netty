@@ -1,7 +1,6 @@
 package com.netty.socket.core;
 
-import com.netty.enums.socket.RequestEventType;
-import io.netty.channel.ChannelHandlerContext;
+import com.netty.enums.socket.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,15 +17,11 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class RequestData {
+public class Request {
     /**
      * 事件类型
      */
-    private RequestEventType type;
-    /**
-     * channel
-     */
-    private ChannelHandlerContext ctx;
+    private EventType type;
     /**
      * 请求数据
      */

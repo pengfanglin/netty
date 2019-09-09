@@ -10,8 +10,19 @@ import lombok.AllArgsConstructor;
  * @date 2019/9/6 0:35
  **/
 @AllArgsConstructor
-public enum RequestEventType {
-
+public enum EventType {
+    /**
+     * 重复登录
+     */
+    REPEAT_BIND,
+    /**
+     * 响应数据
+     */
+    RESPONSE,
+    /**
+     * 新消息
+     */
+    NEW_MESSAGE,
     /**
      * 心跳检测
      */

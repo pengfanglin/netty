@@ -2,82 +2,64 @@ package com.netty.socket.core;
 
 import com.fanglin.common.core.others.BusinessException;
 import com.fanglin.common.utils.JsonUtils;
+import com.netty.enums.socket.EventType;
+import com.netty.socket.disruptor.MessageConsumer;
 import com.netty.socket.handler.TextWebSocketFrameHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author 彭方林
  * @version 1.0
  * @date 2019/9/6 23:10
  **/
-@Component
 @Slf4j
-public class SocketCenter {
+public class SocketCenter extends MessageConsumer {
 
-    @Getter
-    private AtomicInteger onlineNumber = new AtomicInteger(0);
+    public SocketCenter(String consumerId) {
+        super(consumerId);
+    }
 
-
-    @Autowired
-    TextWebSocketFrameHandler handler;
-
-    public Socket request(RequestData request) {
-        Socket response;
-        switch (request.getType()) {
+    @Override
+    public void onEvent(RequestWrapper event) throws Exception {
+        Request request = event.getRequest();
+        EventType type = request.getType();
+        Response response;
+        switch (type) {
             case HEARTBEAT:
-                response = Socket.ok();
+                response = Response.ok(type);
                 break;
             case ID_LIST:
                 Set<String> idList = new HashSet<>(ChannelCenter.channels.size());
-                ChannelCenter.channels.forEach((userId, ctx) -> idList.add(ctx.channel().id().asLongText()));
-                response = Socket.ok(idList);
+                ChannelCenter.channels.forEach((userId, ctx1) -> idList.add(ctx1.channel().id().asLongText()));
+                response = Response.ok(type, idList);
                 break;
             case ONLINE_NUMBER:
-                response = Socket.ok(onlineNumber.intValue());
+                response = Response.ok(type, TextWebSocketFrameHandler.getChannelGroup().size());
                 break;
             case BIND:
                 Integer userId;
                 try {
                     userId = Integer.parseInt(request.getData().toString());
                 } catch (NumberFormatException e) {
-                    return Socket.error(onlineNumber.intValue());
+                    response = Response.error(type, "参数非法");
+                    break;
                 }
-                ChannelCenter.channels.put(userId, request.getCtx());
-                response = Socket.ok();
+                if (ChannelCenter.channels.containsKey(userId)) {
+                    ChannelHandlerContext ctx1 = ChannelCenter.channels.get(userId);
+                    ctx1.channel().writeAndFlush(Response.error(EventType.REPEAT_BIND, "重复登录"));
+                    ctx1.close();
+                }
+                ChannelCenter.channels.put(userId, event.getCtx());
+                response = Response.ok(type);
                 break;
             default:
-                response = Socket.error("请求类型未知");
+                response = Response.error(type, "请求类型未知");
         }
-        return response;
-    }
-
-    public void response(Integer userId, Socket socket) {
-        for (Map.Entry<Integer, ChannelHandlerContext> entry : ChannelCenter.channels.entrySet()) {
-            if (entry.getKey().equals(userId)) {
-                entry.getValue().channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(socket)));
-                return;
-            }
-        }
-        throw new BusinessException("用户不在线");
-    }
-
-    public void response(String id, Socket socket) {
-        for (Map.Entry<Integer, ChannelHandlerContext> entry : ChannelCenter.channels.entrySet()) {
-            if (entry.getValue().channel().id().asLongText().equals(id)) {
-                entry.getValue().channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(socket)));
-                return;
-            }
-        }
-        throw new BusinessException("用户不在线");
+        event.getCtx().channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(response)));
     }
 }
