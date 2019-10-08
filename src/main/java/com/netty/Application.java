@@ -1,6 +1,6 @@
 package com.netty;
 
-import com.fanglin.common.utils.SpringUtils;
+import com.fanglin.common.util.SpringUtils;
 import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.netty.properties.NettyProperties;
@@ -9,7 +9,6 @@ import com.netty.socket.disruptor.MessageConsumer;
 import com.netty.socket.disruptor.RingBufferWorkerPoolFactory;
 import com.netty.socket.init.NettyServer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

@@ -2,8 +2,8 @@ package com.netty.core.others;
 
 import com.fanglin.common.core.others.Ajax;
 import com.fanglin.common.core.others.BusinessException;
-import com.fanglin.common.utils.JsonUtils;
-import com.fanglin.common.utils.OthersUtils;
+import com.fanglin.common.util.JsonUtils;
+import com.fanglin.common.util.OthersUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -122,7 +122,7 @@ public class MyExceptionHandler {
     @ResponseBody
     public Ajax handleException(Exception e, HttpServletRequest request) {
         if (pro) {
-            log.warn("异常原因:{},请求参数:{}", e.getMessage(), JsonUtils.objectToJson(OthersUtils.readRequestParams(request)));
+            log.warn("异常原因:{},请求参数:{}", e.getMessage(), JsonUtils.toJson(OthersUtils.readRequestParams(request)));
         } else {
             e.printStackTrace();
         }

@@ -1,7 +1,7 @@
 package com.netty.service.impl;
 
 import com.fanglin.common.core.others.BusinessException;
-import com.fanglin.common.utils.JsonUtils;
+import com.fanglin.common.util.JsonUtils;
 import com.netty.enums.socket.EventType;
 import com.netty.service.SocketService;
 import com.netty.socket.core.ChannelCenter;
@@ -33,7 +33,7 @@ public class SocketServiceImpl implements SocketService {
     public void response(Integer userId, Response response) {
         for (Map.Entry<Integer, ChannelHandlerContext> entry : ChannelCenter.channels.entrySet()) {
             if (entry.getKey().equals(userId)) {
-                entry.getValue().channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(response)));
+                entry.getValue().channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
                 return;
             }
         }
@@ -43,7 +43,7 @@ public class SocketServiceImpl implements SocketService {
     public void response(String id, Response response) {
         for (Map.Entry<Integer, ChannelHandlerContext> entry : ChannelCenter.channels.entrySet()) {
             if (entry.getValue().channel().id().asLongText().equals(id)) {
-                entry.getValue().channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(response)));
+                entry.getValue().channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
                 return;
             }
         }

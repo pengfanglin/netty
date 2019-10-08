@@ -1,8 +1,8 @@
 package com.netty.socket.handler;
 
-import com.fanglin.common.utils.JsonUtils;
-import com.fanglin.common.utils.OthersUtils;
-import com.fanglin.common.utils.UUIDUtils;
+import com.fanglin.common.util.JsonUtils;
+import com.fanglin.common.util.OthersUtils;
+import com.fanglin.common.util.UUIDUtils;
 import com.netty.enums.socket.EventType;
 import com.netty.socket.core.Request;
 import com.netty.socket.core.Response;
@@ -35,16 +35,16 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) {
         if (OthersUtils.isEmpty(msg.text())) {
-            ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(Response.error("请求体不能为空"))));
+            ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(Response.error("请求体不能为空"))));
             return;
         }
-        Request request = JsonUtils.jsonToObject(msg.text(), Request.class);
+        Request request = JsonUtils.toObject(msg.text(), Request.class);
         if (request.getType() == null) {
-            ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(Response.error("请求类型不能为空"))));
+            ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(Response.error("请求类型不能为空"))));
             return;
         }
         if (request.getData() == null) {
-            ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(Response.error("请求数据不能为空"))));
+            ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(Response.error("请求数据不能为空"))));
             return;
         }
         String producerId = "producerId:" + UUIDUtils.nextId();
@@ -87,6 +87,6 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
         cause.printStackTrace();
         String error = cause.getMessage() == null ? "空指针异常" : cause.getMessage();
         log.warn("连接{}异常:{}", ctx.channel().id().asLongText(), error);
-        ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(Response.error(EventType.RESPONSE, error))));
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(Response.error(EventType.RESPONSE, error))));
     }
 }
