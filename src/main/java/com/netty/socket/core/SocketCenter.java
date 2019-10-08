@@ -1,7 +1,6 @@
 package com.netty.socket.core;
 
-import com.fanglin.common.core.others.BusinessException;
-import com.fanglin.common.utils.JsonUtils;
+import com.fanglin.common.util.JsonUtils;
 import com.netty.enums.socket.EventType;
 import com.netty.socket.disruptor.MessageConsumer;
 import com.netty.socket.handler.TextWebSocketFrameHandler;
@@ -60,6 +59,6 @@ public class SocketCenter extends MessageConsumer {
             default:
                 response = Response.error(type, "请求类型未知");
         }
-        event.getCtx().channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.objectToJson(response)));
+        event.getCtx().channel().writeAndFlush(new TextWebSocketFrame(JsonUtils.toJson(response)));
     }
 }
